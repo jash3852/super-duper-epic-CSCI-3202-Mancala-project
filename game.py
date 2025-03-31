@@ -1,3 +1,5 @@
+import random
+
 class Mancala:
     def __init__(self, pits_per_player=6, stones_per_pit = 4):
         """
@@ -21,6 +23,8 @@ class Mancala:
         self.p1_mancala_index = self.pits_per_player
         self.p2_pits_index = [self.pits_per_player+1, len(self.board)-1-1]
         self.p2_mancala_index = len(self.board)-1
+        self.p1_turn_counter = 0
+        self.p2_turn_counter = 0
         
         # Zeroing the Mancala for both players
         self.board[self.p1_mancala_index] = 0
@@ -83,17 +87,22 @@ class Mancala:
         Finally, the function then switches the current player, allowing the other player to take their turn.
         """
 
-        print("Player", self.current_player, "chose pit:", pit)
+        # print("Player", self.current_player, "chose pit:", pit)
         pit_index = self.get_pit_index(pit)
 
         if (self.valid_move(pit_index)):
             if (self.winning_eval()):
                 self.clean_stones()
-                print("GAME OVER")
+                # print("GAME OVER")
             else:
                 self.moves.append((self.current_player, pit))
                 self.distribute_stones(pit_index)
                 self.switch_player()
+
+            if self.current_player == 1:
+                self.p1_turn_counter += 1
+            else:
+                self.p2_turn_counter += 1
         else:
             print("INVALID MOVE")
         
@@ -112,9 +121,9 @@ class Mancala:
 
 
 
-#
-# Lots of helper functions
-#
+    #
+    # Lots of helper functions
+    #
 
     def get_player_pits(self):
         """
@@ -299,3 +308,30 @@ class Mancala:
         player_pits = self.get_player_pits()
         return [self.get_pit_from_index(pit_index) for pit_index in range(player_pits[0], player_pits[1] + 1) if self.valid_move(pit_index)]
     
+wins = 0
+losses = 0
+ties = 0
+p1_turns_by_game = []
+p2_turns_by_game = []
+
+for _ in range(100):
+    game = Mancala()
+
+    while not game.winning_eval():
+        game.play(game.random_move_generator())
+
+    p1_turns_by_game.append(game.p1_turn_counter)
+    p2_turns_by_game.append(game.p2_turn_counter)
+
+    if game.board[game.p1_mancala_index] > game.board[game.p2_mancala_index]:
+        wins += 1
+    elif game.board[game.p2_mancala_index] > game.board[game.p1_mancala_index]:
+        losses += 1
+    else:
+        ties += 1
+
+print(f"Games Won: {(wins / 100):.1%}")
+print(f"Games Lost: {(losses / 100):.1%}")
+print(f"Games Tied: {(ties / 100):.1%}")
+print("Average Player 1 Turns per Game:", sum(p1_turns_by_game) / len(p1_turns_by_game))
+print("Average Player 2 Turns per Game:", sum(p2_turns_by_game) / len(p2_turns_by_game))
