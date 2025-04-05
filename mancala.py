@@ -95,14 +95,14 @@ class Mancala:
                 self.clean_stones()
                 # print("GAME OVER")
             else:
+                if self.current_player == 1:
+                    self.p1_turn_counter += 1
+                else:
+                    self.p2_turn_counter += 1
+
                 self.moves.append((self.current_player, pit))
                 self.distribute_stones(pit_index)
                 self.switch_player()
-
-            if self.current_player == 1:
-                self.p1_turn_counter += 1
-            else:
-                self.p2_turn_counter += 1
         else:
             print("INVALID MOVE")
         

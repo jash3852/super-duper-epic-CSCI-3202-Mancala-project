@@ -1,6 +1,6 @@
 from mancala import Mancala
     
-num_games = 1000000
+num_games = 100
 wins = 0
 losses = 0
 ties = 0
